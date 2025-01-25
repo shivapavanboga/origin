@@ -1,0 +1,64 @@
+APIS -->
+    1)register: using name,phone,password,email(optional)
+    2)login :using phone,password
+    3)search: search by phone, search by name
+    4)mark-spam: mark any random number as spam
+
+proj_structure--->
+    spamdetection/
+├── spamdetection/      # Project-level configurations
+├── contacts/          # Handles search
+├── users/             # User register,login, authentication functionalities
+├── spam/              # handles spam related functionalities
+├── manage.py          # Django management script
+├── populate_data.py    # Script to add random data for testing
+
+Note:
+    User model in users has registered users only
+
+Extra features for scalability----->
+    1)Caching the results
+    2)added pagination to handle large datasets fetching
+    3)Indexing necessary fields
+    4)added rest-framework throttlers
+
+
+APIs Payload formats and expected responses---------->
+    1)Register
+        payload = {"name":"shiva","phone":"919381574783","email":"shivaboga3gmail.com","password":"password"}
+        url = http://127.0.0.1:8000/user/register/
+        response = {  "message": "User registered successfully!" }
+    2)Login
+        url = http://127.0.0.1:8000/user/login/
+        payload = {"phone":"+919381574783","password":"password"}
+        response = {"message": "Login successful!",
+                    "access_token": "<JWT_ACCESS_TOKEN>",
+                    "refresh_token": "<JWT_REFRESH_TOKEN>"}
+    3)Search
+        Search by Name: /contacts/search/name/?query=<name>&page=<page_number>&page_size=<page_size>
+        Search by Phone: /contacts/search/phone/?query=<phone>&page=<page_number>&page_size=<page_size>
+        response = {
+                    "count": 5,
+                    "total_pages": 2,
+                    "current_page": "1",
+                    "results": [
+                        {
+                            "name": "Mikasa",
+                            "phone": "+918310236816",
+                            "spam_likelihood": "10 percent",
+                            "email": "mikasa6816@gmail.com"
+                        },
+                        .....
+                        .......
+                    "next": true,
+                    "previous": false
+                }
+    4)Mark-spam
+        url = /spam/mark/
+        payload = {"phone":"+918310236816"}
+        response = {"message": "Number marked as spam successfully."}
+
+
+
+
+
