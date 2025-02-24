@@ -16,13 +16,23 @@ class RegisterSerializer(serializers.ModelSerializer):
         return phone
 
     def create(self, validated_data):
-        return User.objects.create_user(
-            username=validated_data['phone'],  # Using phone as username
-            password=validated_data['password'], #this field will be hashed
-            name=validated_data['name'],
-            phone=validated_data['phone'],
-            email=validated_data.get('email')
-        )
+        """Create or update an unregistered user"""
+        phone = validated_data['phone']
+        password = validated_data['password']
+        name = validated_data['name']
+        email = validated_data.get('email')
+
+        # Check if the user exists in the global database
+        user, created = User.objects.get_or_create(phone=phone)
+        if user.is_registered:
+            raise serializers.ValidationError("User already exists")
+        if not user.is_registered:
+            user.name = name
+            user.email = email
+            user.is_registered = True  # Now marked as registered
+            user.set_password(password)  # Ensure password is hashed
+            user.save()
+        return user
 
 class LoginSerializer(serializers.Serializer):
     phone = serializers.CharField(max_length=15)

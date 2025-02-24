@@ -1,18 +1,23 @@
 from django.db import models
-
 from user.models import User
 
 
 class SpamReport(models.Model):
-    phone = models.CharField(max_length=15)
-    spammed_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="spams")
+    spam_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reported_as_spam")
+    spammed_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reports_made")
+
     def __str__(self):
-        return f"{self.phone}"
+        return f"{self.spam_user.id}"
+
     class Meta:
         indexes = [
-            models.Index(fields=['phone']),
+            models.Index(fields=['spam_user']),
         ]
         constraints = [
-            models.UniqueConstraint(fields=['phone', 'spammed_by'], name='unique_spam_report')
+            models.UniqueConstraint(fields=['spam_user', 'spammed_by'], name='unique_spam_report')
         ]
 
+
+class SpamUser(models.Model):  # Added `models.Model`
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    spam_count = models.IntegerField(default=0)

@@ -13,8 +13,6 @@ proj_structure--->
 ├── manage.py          # Django management script
 ├── populate_data.py    # Script to add random data for testing
 
-Note:
-    User model in users has registered users only
 
 Extra features for scalability----->
     1)Caching the results
